@@ -1,0 +1,17 @@
+{
+  "name": "delsol",
+  "version": "1.0.0",
+  "description": "",
+  "main": "art.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "exceljs": "^1.5.1"
+  },
+  "devDependencies": {
+    "standard": "^11.0.1"
+  }
+}
