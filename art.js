@@ -1,22 +1,22 @@
 const Excel = require('exceljs')
 const path = require('path')
-const 
 const WB = new Excel.Workbook()
 
 WB.xlsx.readFile(path.resolve(__dirname, 'xls/Artículos.xlsx'))
-    .then(() => {WS: WB.getWorksheet('Artículos')})
-    .then(() => WB.addWorksheet('art'))
-    .then((WS) => {
-        const codCol = WS.getColumn('A')
-        
-        
-        const WStarget = WB.getWorksheet('art');
-        WStarget.getColumn('A').values = codCol.values
-        
-        return WS
+    .then(() => {
+        WB.addWorksheet('art')
+        const base = WB.getWorksheet('Artículos')
+        const target = WB.getWorksheet('art')
+        return {base, target}
     })
-    .then((WS) => {
-        const codCol = WS.getColumn('Z')
+    .then((sheet) => {
+        const codCol = sheet.base.getColumn('A')
+        sheet.target.getColumn('A').values = codCol.values
+        
+        return sheet
+    })
+    .then((sheet) => {
+        const codCol = sheet.base.getColumn('Z')
     })
     .then(() => {
         WB.removeWorksheet('Artículos')
