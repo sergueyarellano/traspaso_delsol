@@ -23,8 +23,8 @@ WB.xlsx.readFile(path.resolve(__dirname, 'xls/Artículos.xlsx'))
     return sheet
   })
   .then((sheet) => {
-    sheet.target.spliceRows(1, 1)
-    WB.removeWorksheet('Artículos')
+    sheet.target.spliceRows(1, 1) // remove first header row
+    WB.removeWorksheet('Artículos') // do not need this worksheet for target file
     WB.xlsx.writeFile(path.resolve(__dirname, 'xls/ART.xlsx'))
       .then(function () {
         console.log('done')
