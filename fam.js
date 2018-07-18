@@ -1,31 +1,16 @@
 const Excel = require('exceljs')
 const path = require('path')
-const {copyColIntoSheet, formatIVAs, formatDates, formatBoolean} = require('./helpers')
+const {formatFamilyCode, copyColIntoSheet, writeFile, getSheets} = require('./helpers')
 const WB = new Excel.Workbook()
+const WS_NAME = 'Familias_de_artículos'
+const WS_TARGET_NAME = 'fam'
+const SOURCE_FILE = path.resolve(__dirname, './xls/Familias de artículos.xlsx')
+const TARGET_FILE = path.resolve(__dirname, './xls/FAM.xlsx')
 
-WB.xlsx.readFile(path.resolve(__dirname, './xls/Familias de artículos.xlsx'))
-  .then(() => {
-    // set up worksheets
-    WB.addWorksheet('fam')
-    const base = WB.getWorksheet('Familias_de_artículos')
-    const target = WB.getWorksheet('fam')
-    return {base, target}
-  })
-  .then((sheet) => copyColIntoSheet(sheet, 'A', 'A')) // codigo
-  .then((sheet) => copyColIntoSheet(sheet, 'Z', 'B')) // codigo barras
-  .then((sheet) => copyColIntoSheet(sheet, 'C', 'F')) // descripcion
-  .then((sheet) => copyColIntoSheet(sheet, 'Q', 'I')) // Proveedor habitual
-  .then((sheet) => copyColIntoSheet(sheet, 'J', 'J', formatIVAs)) // Tipo de IVA
-  .then((sheet) => copyColIntoSheet(sheet, 'G', 'K')) // Precio de costo
-  .then((sheet) => copyColIntoSheet(sheet, 'U', 'O', formatDates)) // Fecha alta
-  .then((sheet) => copyColIntoSheet(sheet, 'P', 'AM', formatBoolean)) // Tratar stock
-  .then((sheet) => copyColIntoSheet(sheet, 'V', 'AP', formatDates)) // Fecha ultima modificacion
-  .then((sheet) => {
-    sheet.target.spliceRows(1, 1) // remove first header row
-    WB.removeWorksheet('Familias_de_artículos') // do not need this worksheet for target file
-    WB.xlsx.writeFile(path.resolve(__dirname, 'xls/FAM.xlsx'))
-      .then(function () {
-        console.log('done')
-      })
-  })
+WB.xlsx.readFile(SOURCE_FILE)
+  .then(() => getSheets(WB, WS_TARGET_NAME, WS_NAME))
+  .then((sheet) => copyColIntoSheet(sheet, 'A', 'A', formatFamilyCode))
+  .then((sheet) => writeFile(sheet, WB, WS_NAME, TARGET_FILE))
   .catch((e) => console.error(e))
+
+  // TODO: Crear un json con las equivalencias entre familias antiguas y nuevas para poder reemplazar en ART.xlsx
