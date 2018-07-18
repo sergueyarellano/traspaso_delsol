@@ -3,12 +3,12 @@ const path = require('path')
 const {copyColIntoSheet, formatIVAs, formatDates, formatBoolean} = require('./helpers')
 const WB = new Excel.Workbook()
 
-WB.xlsx.readFile(path.resolve(__dirname, 'xls/Artículos.xlsx'))
+WB.xlsx.readFile(path.resolve(__dirname, './xls/Familias de artículos.xlsx'))
   .then(() => {
     // set up worksheets
-    WB.addWorksheet('art')
-    const base = WB.getWorksheet('Artículos')
-    const target = WB.getWorksheet('art')
+    WB.addWorksheet('fam')
+    const base = WB.getWorksheet('Familias_de_artículos')
+    const target = WB.getWorksheet('fam')
     return {base, target}
   })
   .then((sheet) => copyColIntoSheet(sheet, 'A', 'A')) // codigo
@@ -22,8 +22,8 @@ WB.xlsx.readFile(path.resolve(__dirname, 'xls/Artículos.xlsx'))
   .then((sheet) => copyColIntoSheet(sheet, 'V', 'AP', formatDates)) // Fecha ultima modificacion
   .then((sheet) => {
     sheet.target.spliceRows(1, 1) // remove first header row
-    WB.removeWorksheet('Artículos') // do not need this worksheet for target file
-    WB.xlsx.writeFile(path.resolve(__dirname, 'xls/ART.xlsx'))
+    WB.removeWorksheet('Familias_de_artículos') // do not need this worksheet for target file
+    WB.xlsx.writeFile(path.resolve(__dirname, 'xls/FAM.xlsx'))
       .then(function () {
         console.log('done')
       })
