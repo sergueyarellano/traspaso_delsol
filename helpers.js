@@ -10,7 +10,8 @@ module.exports = {
   formatFamilyCode,
   writeFile,
   getSheets,
-  generateFAMJSON
+  generateFAMJSON,
+  formatFamilies
 }
 
 function writeFile (sheet, WB, wsName, targetFile) {
@@ -71,6 +72,13 @@ function formatFamilyCode (codes) {
   })
 }
 
+function formatFamilies (codes) {
+  const famRelations = require('./tmp/fam.json')
+  return codes.map((code) => {
+    return famRelations[code]
+  })
+}
+
 function trimTo3Chars (str) {
   const length = 3
   return str.substring(0, length)
@@ -79,6 +87,7 @@ function trimTo3Chars (str) {
 function generateFAMJSON (sheet) {
   const oldCodes = sheet.base.getColumn('A').values
   const newCodes = sheet.target.getColumn('A').values
+
   const output = oldCodes.reduce((acc, oldCode, i) => {
     if (oldCode !== 'Código de familia') {
       acc[oldCode] = newCodes[i]

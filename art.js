@@ -1,6 +1,6 @@
 const Excel = require('exceljs')
 const path = require('path')
-const {copyColIntoSheet, formatIVAs, formatDates, formatBoolean, getSheets, writeFile} = require('./helpers')
+const {copyColIntoSheet, formatIVAs, formatDates, formatBoolean, getSheets, writeFile, formatFamilies} = require('./helpers')
 const WB = new Excel.Workbook()
 const WS_NAME = 'Artículos'
 const WS_TARGET_NAME = 'art'
@@ -11,6 +11,7 @@ WB.xlsx.readFile(SOURCE_FILE)
   .then(() => getSheets(WB, WS_TARGET_NAME, WS_NAME))
   .then((sheet) => copyColIntoSheet(sheet, 'A', 'A')) // codigo
   .then((sheet) => copyColIntoSheet(sheet, 'Z', 'B')) // codigo barras
+  .then((sheet) => copyColIntoSheet(sheet, 'B', 'E', formatFamilies)) // familia
   .then((sheet) => copyColIntoSheet(sheet, 'C', 'F')) // descripcion
   .then((sheet) => copyColIntoSheet(sheet, 'Q', 'I')) // Proveedor habitual
   .then((sheet) => copyColIntoSheet(sheet, 'J', 'J', formatIVAs)) // Tipo de IVA
