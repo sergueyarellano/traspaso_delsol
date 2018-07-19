@@ -1,4 +1,6 @@
 const moment = require('moment')
+const fs = require('fs')
+const path = require('path')
 
 module.exports = {
   copyColIntoSheet,
@@ -7,7 +9,8 @@ module.exports = {
   formatBoolean,
   formatFamilyCode,
   writeFile,
-  getSheets
+  getSheets,
+  generateFAMJSON
 }
 
 function writeFile (sheet, WB, wsName, targetFile) {
@@ -64,14 +67,33 @@ function formatFamilyCode (codes) {
   return codes.map((code) => {
     code = code.replace(/\s/g, '')
     const match = code.match(re)
-    return match ? match[1] + match[2] : code
+    return match ? match[1] + match[2] : trimTo3Chars(code)
   })
 }
 
-function getDuplicates (list) {
-  list.forEach(function (item, i) {
-    if (list.indexOf(item) !== i) {
-      console.log('duplicate item' + item + ' at position ' + i)
+function trimTo3Chars (str) {
+  const length = 3
+  return str.substring(0, length)
+}
+
+function generateFAMJSON (sheet) {
+  const oldCodes = sheet.base.getColumn('A').values
+  const newCodes = sheet.target.getColumn('A').values
+  const output = oldCodes.reduce((acc, oldCode, i) => {
+    if (oldCode !== 'Código de familia') {
+      acc[oldCode] = newCodes[i]
     }
+    return acc
+  }, {})
+
+  const content = JSON.stringify(output)
+
+  fs.writeFile(path.resolve(__dirname, 'tmp/fam.json'), content, 'utf8', function (err) {
+    if (err) {
+      return console.log(err)
+    }
+
+    console.log('The file was saved!')
   })
+  return sheet
 }

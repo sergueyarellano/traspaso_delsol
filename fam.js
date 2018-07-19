@@ -1,6 +1,6 @@
 const Excel = require('exceljs')
 const path = require('path')
-const {formatFamilyCode, copyColIntoSheet, writeFile, getSheets} = require('./helpers')
+const {formatFamilyCode, copyColIntoSheet, writeFile, getSheets, generateFAMJSON} = require('./helpers')
 const WB = new Excel.Workbook()
 const WS_NAME = 'Familias_de_artículos'
 const WS_TARGET_NAME = 'fam'
@@ -10,6 +10,7 @@ const TARGET_FILE = path.resolve(__dirname, './xls/FAM.xlsx')
 WB.xlsx.readFile(SOURCE_FILE)
   .then(() => getSheets(WB, WS_TARGET_NAME, WS_NAME))
   .then((sheet) => copyColIntoSheet(sheet, 'A', 'A', formatFamilyCode))
+  .then((sheet) => generateFAMJSON(sheet))
   .then((sheet) => writeFile(sheet, WB, WS_NAME, TARGET_FILE))
   .catch((e) => console.error(e))
 
