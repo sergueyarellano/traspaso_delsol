@@ -64,11 +64,36 @@ function formatBoolean (booleans) {
 
 function formatFamilyCode (codes) {
   const re = /([0-9]{1})(?:[0-9A-Za-z])([0-9A-Za-zñÑ]{2,2})/
+  let newCodes = []
 
   return codes.map((code) => {
     code = code.replace(/\s/g, '')
     const match = code.match(re)
-    return match ? match[1] + match[2] : trimTo3Chars(code)
+    let newCode = match ? match[1] + match[2] : match
+
+    newCode = generateCode(newCode, newCodes)
+    console.log('newCode::::::: ', newCode)
+
+    match && newCodes.push(newCode)
+    return match ? newCode : trimTo3Chars(code)
+  })
+}
+
+function generateCode (code, list) {
+  if (!isDuplicated(code, list)) {
+    return code
+  } else {
+    let splitted = code.split('')
+    let unicodeTail = splitted[2].codePointAt(0)
+    let newTail = String.fromCharCode(unicodeTail + 1)
+    let newCode = splitted[0] + splitted[1] + newTail
+    return generateCode(newCode, list)
+  }
+}
+
+function isDuplicated (str, list) {
+  return list.some((val) => {
+    return val === str
   })
 }
 
