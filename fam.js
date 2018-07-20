@@ -5,7 +5,7 @@ const WB = new Excel.Workbook()
 const WS_NAME = 'Familias_de_artículos'
 const WS_TARGET_NAME = 'fam'
 const SOURCE_FILE = path.resolve(__dirname, './xls/Familias de artículos.xlsx')
-const TARGET_FILE = path.resolve(__dirname, './xls/FAM.xlsx')
+const TARGET_FILE = path.resolve(__dirname, './xls/traspaso/FAM.xlsx')
 
 WB.xlsx.readFile(SOURCE_FILE)
   .then(() => getSheets(WB, WS_TARGET_NAME, WS_NAME))

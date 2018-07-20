@@ -11,11 +11,19 @@ module.exports = {
   writeFile,
   getSheets,
   generateFAMJSON,
-  formatFamilies
+  formatFamilies,
+  writeFilePure
 }
 
 function writeFile (sheet, WB, wsName, targetFile) {
   sheet.target.spliceRows(1, 1) // remove first header row
+  WB.removeWorksheet(wsName) // do not need this worksheet for target file
+  WB.xlsx.writeFile(targetFile)
+    .then(function () {
+      console.log('done')
+    })
+}
+function writeFilePure (sheet, WB, wsName, targetFile) {
   WB.removeWorksheet(wsName) // do not need this worksheet for target file
   WB.xlsx.writeFile(targetFile)
     .then(function () {
@@ -72,7 +80,6 @@ function formatFamilyCode (codes) {
     let newCode = match ? match[1] + match[2] : match
 
     newCode = generateCode(newCode, newCodes)
-    console.log('newCode::::::: ', newCode)
 
     match && newCodes.push(newCode)
     return match ? newCode : trimTo3Chars(code)
