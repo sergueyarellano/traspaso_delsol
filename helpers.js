@@ -201,9 +201,7 @@ function generateFAMJSON (sheet) {
 
 function generateClientCodesJSON (sheet) {
   const oldCodes = sheet.base.getColumn('DQ').values
-  console.log('oldCodes: ', oldCodes)
   const newCodes = sheet.base.getColumn('A').values
-  console.log('newCodes: ', newCodes)
 
   const output = oldCodes.reduce((acc, oldCode, i) => {
     acc[oldCode] = newCodes[i]
