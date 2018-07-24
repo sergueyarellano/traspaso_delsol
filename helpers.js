@@ -1,6 +1,7 @@
 const moment = require('moment')
 const fs = require('fs')
 const path = require('path')
+const clientTypes = require('./tmp/cli.type.json')
 
 module.exports = {
   copyColIntoSheet,
@@ -12,7 +13,13 @@ module.exports = {
   getSheets,
   generateFAMJSON,
   formatFamilies,
-  writeFilePure
+  writeFilePure,
+  formatTypeClient,
+  filterEmail,
+  formatRoute,
+  formatTimeTable,
+  formatStatus,
+  formatTlf
 }
 
 function writeFile (sheet, WB, wsName, targetFile) {
@@ -43,10 +50,62 @@ function copyColIntoSheet (sheet, colBase, colTarget, formatFn) {
   sheet.target.getColumn(colTarget).values = formatFn ? formatFn(values) : values
   return sheet
 }
+function formatTypeClient (values) {
+  return values.map((type) => clientTypes[type])
+}
+
+function formatStatus (values) {
+  // being 3 dado de baja
+  // and 1 habitual
+  return values.map((isObsolete) => isObsolete ? 3 : 1)
+}
+
+function formatRoute (values) {
+  const routes = {
+    '0': 'XXX',
+    '1': 'LUN',
+    '2': 'MAR',
+    '3': 'MIE',
+    '4': 'JUE',
+    '5': 'VIE',
+    '6': 'XXX',
+    '7': 'XXX'
+  }
+  return values.map((route) => routes[route])
+}
+
+function filterEmail (values) {
+  const re = /(.*)@(.*)([.])(.*)/
+  return values.map((posibleEmail) => {
+    const isValid = re.test(posibleEmail)
+    return isValid ? posibleEmail : ''
+  })
+}
+
+function formatTimeTable (values) {
+  const closeDays = {
+    '0': 'Sin asignar',
+    '1': 'Lunes',
+    '2': 'Martes',
+    '3': 'Miércoles',
+    '4': 'Jueves',
+    '5': 'Viernes',
+    '6': 'Sábado',
+    '7': 'Domingo'
+  }
+  return values.map((closeDay) => `Cierre: ${closeDays[closeDay]}`)
+}
 
 function formatDates (dates) {
   return dates.map((date) => {
     return typeof date !== 'string' ? moment(date).format('DD/MM/YYYY') : date
+  })
+}
+
+function formatTlf (tlfs) {
+  return tlfs.map((tlf) => {
+    const rawtlf = tlf.replace(/[- ]/g, '')
+    return `${rawtlf.substring(0, 3)} ${rawtlf.substring(3, 6)} ${rawtlf.substring(6)}`
   })
 }
 
