@@ -28,5 +28,24 @@ WB.xlsx.readFile(SOURCE_FILE)
   .then((sheet) => copyColIntoSheet(sheet, 'AH', 'AU', formatTimeTable)) // horario
   .then((sheet) => copyColIntoSheet(sheet, 'AF', 'BR', formatRoute)) // ruta
   .then((sheet) => copyColIntoSheet(sheet, 'N', 'DP', formatStatus)) // estado
+  .then((sheet) => {
+    const re = /(\d{1,5})([a-zA-Z]*)/
+    sheet.target.eachRow((row, rowNumber) => {
+      let poblacion = row.getCell('G').value
+      let hasToBeModified = re.test(poblacion)
+
+      if (hasToBeModified) {
+        let newPob = poblacion.match(re)[2]
+        let cp = poblacion.match(re)[1]
+        row.getCell('H').value = cp
+        row.getCell('G').value = newPob
+      }
+
+      row.getCell('I').value = 'Madrid'
+      row.getCell('J').value = 'España'
+    })
+
+    return sheet
+  })
   .then((sheet) => writeFile(sheet, WB, WS_NAME, TARGET_FILE))
   .catch((e) => console.error(e))

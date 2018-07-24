@@ -12,6 +12,7 @@ module.exports = {
   writeFile,
   getSheets,
   generateFAMJSON,
+  generateClientCodesJSON,
   formatFamilies,
   writeFilePure,
   formatTypeClient,
@@ -104,7 +105,7 @@ function formatDates (dates) {
 
 function formatTlf (tlfs) {
   return tlfs.map((tlf) => {
-    const rawtlf = tlf.replace(/[- ]/g, '')
+    const rawtlf = tlf.replace(/[-_ ]/g, '')
     return `${rawtlf.substring(0, 3)} ${rawtlf.substring(3, 6)} ${rawtlf.substring(6)}`
   })
 }
@@ -189,6 +190,29 @@ function generateFAMJSON (sheet) {
   const content = JSON.stringify(output)
 
   fs.writeFile(path.resolve(__dirname, 'tmp/fam.json'), content, 'utf8', function (err) {
+    if (err) {
+      return console.log(err)
+    }
+
+    console.log('The file was saved!')
+  })
+  return sheet
+}
+
+function generateClientCodesJSON (sheet) {
+  const oldCodes = sheet.base.getColumn('DQ').values
+  console.log('oldCodes: ', oldCodes)
+  const newCodes = sheet.base.getColumn('A').values
+  console.log('newCodes: ', newCodes)
+
+  const output = oldCodes.reduce((acc, oldCode, i) => {
+    acc[oldCode] = newCodes[i]
+    return acc
+  }, {})
+
+  const content = JSON.stringify(output)
+
+  fs.writeFile(path.resolve(__dirname, 'tmp/code.cli.eq.json'), content, 'utf8', function (err) {
     if (err) {
       return console.log(err)
     }
