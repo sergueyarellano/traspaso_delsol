@@ -10,8 +10,11 @@ const TARGET_FILE = path.resolve(__dirname, 'xls/traspaso/LFA.xlsx')
 WB.xlsx.readFile(SOURCE_FILE)
   .then(() => getSheets(WB, WS_TARGET_NAME, WS_NAME))
   .then((sheet) => {
+    let docType = 0
+    let docNum = 0
+    let lastPosLine = 0
     sheet.base.eachRow((row, rowNumber) => {
-    
+      // let posLine = 
       let serie = row.getCell('W').value
       let numeroDoc = row.getCell('B').value
       let codArt = row.getCell('C').value
