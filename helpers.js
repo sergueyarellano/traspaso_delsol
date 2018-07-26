@@ -2,6 +2,7 @@ const moment = require('moment')
 const fs = require('fs')
 const path = require('path')
 const clientTypes = require('./tmp/cli.type.json')
+const codeEq = require('./tmp/code.cli.eq.json')
 
 module.exports = {
   copyColIntoSheet,
@@ -20,7 +21,19 @@ module.exports = {
   formatRoute,
   formatTimeTable,
   formatStatus,
-  formatTlf
+  formatTlf,
+  formatSerie,
+  formatClientCode
+}
+
+function formatSerie (values) {
+  return values.map((serie) => {
+    serie = Number(serie)
+    return serie === 11 ? 2 : serie
+  })
+}
+function formatClientCode (values) {
+  return values.map((code) => codeEq[code])
 }
 
 function writeFile (sheet, WB, wsName, targetFile) {
